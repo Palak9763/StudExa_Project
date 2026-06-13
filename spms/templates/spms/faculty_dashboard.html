@@ -1,0 +1,109 @@
+{% extends 'spms/base.html' %}
+{% block title %}Faculty Dashboard — StudExa{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani" style="height:34px;width:auto;object-fit:contain"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div>
+    <div class="sidebar-tagline">Faculty Portal</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-section">Menu</div>
+    <a class="nav-item active" href="{% url 'faculty_dashboard' %}"><span class="ni">🏠</span>Dashboard</a>
+    <a class="nav-item" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+    <div class="sidebar-section">Account</div>
+    <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av">👩</div>
+      <div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">Faculty · {{ request.user.department }}</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Faculty Dashboard</h1>
+  <p>Review student submissions and monitor class performance.</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card indigo-card"><div class="stat-label">⏳ Pending Reviews</div><div class="stat-num">{{ stats.pending }}</div></div>
+  <div class="stat-card"><div class="stat-label">✅ Approved This Month</div><div class="stat-num" style="color:var(--green)">{{ stats.approved_month }}</div></div>
+  <div class="stat-card"><div class="stat-label">👥 Total Students</div><div class="stat-num">{{ stats.total_students }}</div></div>
+  <div class="stat-card"><div class="stat-label">📊 Avg Score</div><div class="stat-num" style="color:var(--indigo)">{{ stats.avg_score }}</div></div>
+</div>
+
+<!-- PENDING REVIEWS -->
+<div class="card" style="margin-bottom:20px">
+  <div class="card-title">
+    Pending Submissions
+    {% if stats.pending %}<span class="badge badge-pending">{{ stats.pending }} awaiting review</span>{% endif %}
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr><th>Student</th><th>Achievement</th><th>Category</th><th>Est. Points</th><th>Submitted</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for ach in pending %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--indigo-pale);display:flex;align-items:center;justify-content:center;font-size:14px">🧑</div>
+            <div>
+              <div style="font-weight:600;font-size:13px;color:var(--text)">{{ ach.student.get_full_name }}</div>
+              <div style="font-size:11px;color:var(--muted)">{{ ach.student.enrollment_no }}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div style="font-weight:500;color:var(--text)">{{ ach.title }}</div>
+          <div style="font-size:11px;color:var(--muted)">{{ ach.get_result_display }}</div>
+        </td>
+        <td><span class="badge badge-{{ ach.category }}">{{ ach.get_category_display }}</span></td>
+        <td><span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--indigo)">{{ ach.points_awarded }} pts</span></td>
+        <td style="color:var(--muted);font-size:12px">{{ ach.submitted_at|timesince }} ago</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <a href="{% url 'review_achievement' ach.pk %}" class="btn btn-outline" style="font-size:12px;padding:6px 12px">📄 Review</a>
+            <form method="post" action="{% url 'review_achievement' ach.pk %}" style="display:inline">
+              {% csrf_token %}<input type="hidden" name="action" value="approve"/>
+              <button type="submit" class="btn btn-success" style="font-size:12px;padding:6px 12px">✓ Approve</button>
+            </form>
+            <form method="post" action="{% url 'review_achievement' ach.pk %}" style="display:inline">
+              {% csrf_token %}<input type="hidden" name="action" value="reject"/>
+              <button type="submit" class="btn btn-danger" style="font-size:12px;padding:6px 12px">✗ Reject</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;padding:36px;color:var(--muted)">🎉 All caught up! No pending reviews.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="card">
+  <div class="card-title">Class Leaderboard — Top Students <a href="{% url 'leaderboard' %}">Full View →</a></div>
+  {% for student in leaderboard %}
+  <div class="lb-item">
+    <div class="lb-rank {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</div>
+    <div class="lb-av">🧑</div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:600;color:var(--text)">{{ student.get_full_name }}</div>
+      <div style="font-size:12px;color:var(--muted)">{{ student.enrollment_no }} · {{ student.department }}</div>
+    </div>
+    <div class="lb-pts">{{ student.get_total_score }} pts</div>
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:30px;color:var(--muted)">No students yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}

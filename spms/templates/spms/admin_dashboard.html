@@ -1,0 +1,199 @@
+{% extends 'spms/base.html' %}
+{% block title %}Admin Panel — StudExa{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani" style="height:34px;width:auto;object-fit:contain"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div>
+    <div class="sidebar-tagline">Admin Panel</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-section">Overview</div>
+    <a class="nav-item active" href="{% url 'admin_dashboard' %}"><span class="ni">🏠</span>Dashboard</a>
+    <a class="nav-item" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+    <div class="sidebar-section">Management</div>
+    <a class="nav-item" href="{% url 'manage_users' %}"><span class="ni">👥</span>Manage Users</a>
+    <a class="nav-item" href="{% url 'faculty_dashboard' %}"><span class="ni">📥</span>Review Queue</a>
+    <a class="nav-item" href="/admin/spms/pointrule/"><span class="ni">⚙️</span>Point Rules</a>
+    <a class="nav-item" href="/admin/spms/achievement/"><span class="ni">📋</span>All Submissions</a>
+    <div class="sidebar-section">System</div>
+    <a class="nav-item" href="/admin/"><span class="ni">🔧</span>Django Admin</a>
+    <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av">🛡️</div>
+      <div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Admin Panel</h1>
+  <p>Institution-wide overview — users, achievements, and system analytics.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card indigo-card">
+    <div class="stat-label">🧑‍🎓 Total Students</div>
+    <div class="stat-num">{{ stats.total_students }}</div>
+    <div class="stat-sub">{{ stats.total_faculty }} faculty registered</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">📤 Total Submissions</div>
+    <div class="stat-num" style="color:var(--indigo)">{{ stats.total_submissions }}</div>
+    <div class="stat-sub">{{ stats.approved }} verified</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">⏳ Pending Review</div>
+    <div class="stat-num" style="color:var(--gold)">{{ stats.pending }}</div>
+    <div class="stat-sub">Awaiting faculty action</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">📊 Avg Student Score</div>
+    <div class="stat-num" style="color:var(--green)">{{ stats.avg_score }}</div>
+    <div class="stat-sub">Across all verified achievements</div>
+  </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="card" style="margin-bottom:22px">
+  <div class="card-title">⚡ Quick Actions</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+    <a href="{% url 'register' %}" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--indigo-pale);border:1.5px solid var(--indigo-border);border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:var(--indigo)" onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='var(--indigo-pale)'">
+      <span style="font-size:24px">➕</span><div style="font-size:13px;font-weight:600">Add New User</div><div style="font-size:11px;color:var(--muted)">Student or Faculty</div>
+    </a>
+    <a href="/admin/spms/pointrule/add/" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#fef3c7;border:1.5px solid #fde68a;border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:#92400e" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
+      <span style="font-size:24px">⚙️</span><div style="font-size:13px;font-weight:600">Add Point Rule</div><div style="font-size:11px;color:var(--muted)">Configure scoring</div>
+    </a>
+    <a href="{% url 'faculty_dashboard' %}" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#d1fae5;border:1.5px solid #a7f3d0;border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:#065f46" onmouseover="this.style.background='#a7f3d0'" onmouseout="this.style.background='#d1fae5'">
+      <span style="font-size:24px">📥</span><div style="font-size:13px;font-weight:600">Review Queue</div><div style="font-size:11px;color:var(--muted)">{{ stats.pending }} pending</div>
+    </a>
+    <a href="{% url 'manage_users' %}" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#ede9fe;border:1.5px solid #ddd6fe;border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:#5b21b6" onmouseover="this.style.background='#ddd6fe'" onmouseout="this.style.background='#ede9fe'">
+      <span style="font-size:24px">👥</span><div style="font-size:13px;font-weight:600">Manage Users</div><div style="font-size:11px;color:var(--muted)">{{ stats.total_students|add:stats.total_faculty }} total</div>
+    </a>
+    <a href="{% url 'leaderboard' %}" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#fee2e2;border:1.5px solid #fecaca;border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:#991b1b" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+      <span style="font-size:24px">🏆</span><div style="font-size:13px;font-weight:600">Leaderboard</div><div style="font-size:11px;color:var(--muted)">Top performers</div>
+    </a>
+    <a href="/admin/" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:20px 16px;text-align:center;transition:all 0.2s;color:var(--text2)" onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--indigo)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <span style="font-size:24px">🔧</span><div style="font-size:13px;font-weight:600">Django Admin</div><div style="font-size:11px;color:var(--muted)">Full DB control</div>
+    </a>
+  </div>
+</div>
+
+<div class="grid21">
+  <!-- USERS TABLE -->
+  <div class="card">
+    <div class="card-title">Recent Students <a href="{% url 'manage_users' %}">View All →</a></div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Student</th><th>Department</th><th>Score</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for u in students|slice:":8" %}
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:8px;background:var(--indigo-pale);display:flex;align-items:center;justify-content:center;font-size:14px">🧑</div>
+              <div>
+                <div style="font-weight:600;font-size:13px;color:var(--text)">{{ u.get_full_name|default:u.username }}</div>
+                <div style="font-size:11px;color:var(--muted)">{{ u.enrollment_no|default:"—" }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="color:var(--muted);font-size:13px">{{ u.department|default:"—" }}</td>
+          <td><span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--indigo)">{{ u.get_total_score }}</span></td>
+          <td>{% if u.is_active %}<span class="badge badge-approved">Active</span>{% else %}<span class="badge badge-rejected">Inactive</span>{% endif %}</td>
+          <td>
+            <a href="{% url 'toggle_user_active' u.pk %}" class="btn {% if u.is_active %}btn-danger{% else %}btn-success{% endif %}" style="font-size:11px;padding:5px 10px">
+              {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">No students registered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SIDEBAR PANELS -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <!-- CATEGORY BREAKDOWN -->
+    <div class="card">
+      <div class="card-title">Submissions by Category</div>
+      {% for cat, count in cat_counts.items %}
+      <div class="prog-item">
+        <div class="prog-head">
+          <span style="text-transform:capitalize;color:var(--text2)">{{ cat }}</span>
+          <span style="color:var(--indigo);font-weight:700">{% widthratio count total_ach 100 %}%</span>
+        </div>
+        <div class="prog-bar">
+          <div class="prog-fill" style="width:{% widthratio count total_ach 100 %}%;background:{% if cat == 'hackathon' %}var(--indigo){% elif cat == 'research' %}#7c3aed{% elif cat == 'patent' %}var(--gold){% else %}var(--green){% endif %}"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- POINT RULES SUMMARY -->
+    <div class="card">
+      <div class="card-title">Point Rules <a href="/admin/spms/pointrule/">Edit →</a></div>
+      {% for rule in point_rules|slice:":6" %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--text2)">{{ rule.description|truncatechars:28 }}</div>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--indigo);font-size:13px">{{ rule.points }}pt</span>
+      </div>
+      {% empty %}
+      <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No rules yet. <a href="/admin/spms/pointrule/add/" style="color:var(--indigo);font-weight:600">Add rules →</a></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- TOP STUDENTS -->
+<div class="card">
+  <div class="card-title">🏆 Top Performing Students <a href="{% url 'leaderboard' %}">Full Leaderboard →</a></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">
+    {% for student in leaderboard %}
+    <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:18px 14px;text-align:center;transition:all 0.2s" onmouseover="this.style.borderColor='var(--indigo-border)';this.style.background='var(--indigo-pale)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg)'">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:{% if forloop.counter == 1 %}var(--gold){% elif forloop.counter == 2 %}#6b7280{% elif forloop.counter == 3 %}#92400e{% else %}var(--muted){% endif %}">#{{ forloop.counter }}</div>
+      <div style="width:40px;height:40px;border-radius:10px;background:var(--indigo-pale);display:flex;align-items:center;justify-content:center;font-size:18px;margin:8px auto">🧑</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text)">{{ student.get_full_name|truncatechars:16 }}</div>
+      <div style="font-size:11px;color:var(--muted);margin:2px 0 8px">{{ student.department|truncatechars:18 }}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--indigo)">{{ student.get_total_score }}</div>
+      <div style="font-size:11px;color:var(--muted)">points</div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">No students yet.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- RECENT SUBMISSIONS -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">📋 Recent Submissions <a href="/admin/spms/achievement/">View in Admin →</a></div>
+  <table class="data-table">
+    <thead><tr><th>Student</th><th>Achievement</th><th>Category</th><th>Points</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for ach in recent_achievements %}
+      <tr>
+        <td style="font-weight:500;color:var(--text)">{{ ach.student.get_full_name }}</td>
+        <td style="color:var(--text2)">{{ ach.title|truncatechars:36 }}</td>
+        <td><span class="badge badge-{{ ach.category }}">{{ ach.get_category_display }}</span></td>
+        <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--indigo)">{% if ach.status == 'approved' %}{{ ach.points_awarded }}{% else %}—{% endif %}</td>
+        <td><span class="badge badge-{{ ach.status }}">{{ ach.get_status_display }}</span></td>
+        <td style="color:var(--muted);font-size:12px">{{ ach.submitted_at|date:"d M Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No submissions yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

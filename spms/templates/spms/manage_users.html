@@ -1,0 +1,84 @@
+{% extends 'spms/base.html' %}
+{% block title %}Manage Users{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header"><div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div></div>
+  <div class="sidebar-nav"><div class="sidebar-section">Menu</div>
+  <a class="nav-item" href="{% url 'admin_dashboard' %}"><span class="ni">📊</span>Dashboard</a>
+  <a class="nav-item active" href="{% url 'manage_users' %}"><span class="ni">👥</span>Manage Users</a>
+  <a class="nav-item" href="{% url 'faculty_dashboard' %}"><span class="ni">📥</span>Review Queue</a>
+  <a class="nav-item" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+  <a class="nav-item" href="/admin/"><span class="ni">⚙️</span>Django Admin</a>
+  <div class="sidebar-section">Account</div>
+  <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av" style="background:linear-gradient(135deg,var(--red),var(--gold))">🛡️</div>
+      <div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Manage Users</h1>
+  <p>View, search, and manage all registered users.</p>
+</div>
+
+<!-- SEARCH -->
+<form method="get" style="display:flex;gap:12px;margin-bottom:20px">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search by name, enrollment no, or email..." style="max-width:400px"/>
+  <button type="submit" class="btn btn-primary">Search</button>
+  {% if q %}<a href="{% url 'manage_users' %}" class="btn btn-outline">Clear</a>{% endif %}
+</form>
+
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr><th>User</th><th>Role</th><th>Department</th><th>Email</th><th>Score</th><th>Joined</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px">
+              {% if u.role == 'faculty' %}👩{% elif u.role == 'admin' %}🛡️{% else %}🧑{% endif %}
+            </div>
+            <div>
+              <div style="font-weight:500;font-size:13px">{{ u.get_full_name|default:u.username }}</div>
+              <div style="font-size:11px;color:var(--muted)">{{ u.enrollment_no|default:"—" }}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-{{ u.role }}">{{ u.get_role_display }}</span></td>
+        <td style="color:var(--muted);font-size:13px">{{ u.department|default:"—" }}</td>
+        <td style="color:var(--muted);font-size:13px">{{ u.email }}</td>
+        <td style="font-family:var(--font-head);font-weight:700;color:var(--accent)">
+          {% if u.role == 'student' %}{{ u.get_total_score }}{% else %}—{% endif %}
+        </td>
+        <td style="color:var(--muted);font-size:12px">{{ u.date_joined|date:"d M Y" }}</td>
+        <td>
+          {% if u.is_active %}<span class="badge badge-approved">Active</span>
+          {% else %}<span class="badge badge-rejected">Inactive</span>{% endif %}
+        </td>
+        <td>
+          {% if u != request.user %}
+          <a href="{% url 'toggle_user_active' u.pk %}" class="btn {% if u.is_active %}btn-danger{% else %}btn-success{% endif %}" style="font-size:11px;padding:5px 10px">
+            {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

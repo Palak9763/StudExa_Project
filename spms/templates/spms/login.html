@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — StudExa | Sanjivani University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --white: #ffffff;
+      --bg: #f8f8f8;
+      --orange: #e05c1a;
+      --orange-dark: #c44d12;
+      --orange-light: #fff3ed;
+      --orange-border: #f5c9aa;
+      --text: #1a1a1a;
+      --text2: #3a3a3a;
+      --muted: #888888;
+      --border: #e5e5e5;
+      --red: #dc2626;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--white);
+      color: var(--text2);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-logo img {
+      height: 52px; width: auto; object-fit: contain;
+    }
+    .nav-right {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .nav-link {
+      font-size: 14px; font-weight: 600; color: var(--orange);
+      text-decoration: none; padding: 8px 20px;
+      border: 2px solid var(--orange); border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { background: var(--orange); color: #fff; }
+
+    /* ── MAIN SPLIT ── */
+    .main-wrap {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 77px);
+    }
+
+    /* ── LEFT PANEL — building image ── */
+    .left-panel {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .left-panel img.building {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+    }
+    .left-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.0) 60%,
+        rgba(224,92,26,0.08) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* ── RIGHT PANEL — login form ── */
+    .right-panel {
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 56px;
+    }
+    .form-wrap {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* University name above form */
+    .uni-name {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .form-title {
+      font-family: var(--font-head);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.15;
+    }
+    .form-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* FORM */
+    .fg { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+    input {
+      width: 100%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 15px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(224,92,26,0.1);
+    }
+    input::placeholder { color: #bbb; }
+
+    .btn-login {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 13px;
+      background: var(--orange); color: #fff;
+      border: none; border-radius: 9px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(224,92,26,0.28);
+      letter-spacing: 0.02em;
+    }
+    .btn-login:hover {
+      background: var(--orange-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(224,92,26,0.36);
+    }
+
+    .form-footer {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+    .form-footer a {
+      color: var(--orange);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .form-footer a:hover { text-decoration: underline; }
+
+    /* ALERT */
+    .alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex; align-items: center; gap: 12px; margin: 22px 0;
+    }
+    .divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+    .divider span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    /* StudExa badge */
+    .studexa-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange-light);
+      border: 1px solid var(--orange-border);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px; font-weight: 600; color: var(--orange);
+      margin-bottom: 20px;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 14px 40px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .page-footer span { color: var(--orange); font-weight: 600; }
+
+    @media (max-width: 768px) {
+      .main-wrap { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 40px 24px; }
+      .navbar { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'spms/img/sanjivani_logo.jpeg' %}" alt="Sanjivani University"/>
+    </div>
+    <div class="nav-right">
+      <a href="{% url 'register' %}" class="nav-link">Register</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrap">
+
+    <!-- LEFT: Building Image -->
+    <div class="left-panel">
+      <img class="building" src="{% static 'spms/img/sanjivani_building.jpeg' %}" alt="Sanjivani University Campus"/>
+      <div class="left-overlay"></div>
+    </div>
+
+    <!-- RIGHT: Login Form -->
+    <div class="right-panel">
+      <div class="form-wrap">
+
+        <div class="studexa-badge">🎓 StudExa</div>
+
+        <div class="uni-name">Sanjivani University</div>
+        <h1 class="form-title">Welcome Back</h1>
+        <p class="form-sub">Sign in with your email or enrollment number</p>
+
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert">⚠ {{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="fg">
+            <label>Email / Enrollment No.</label>
+            <input type="text" name="username" placeholder="2021CS042 or email@college.edu" required autofocus/>
+          </div>
+          <div class="fg">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Your password" required/>
+          </div>
+          <button type="submit" class="btn-login">Sign In →</button>
+        </form>
+
+        <p class="form-footer">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    © 2025 <span>StudExa</span> — Student Achievement Tracker · Sanjivani University · Django + SQLite
+  </footer>
+
+</body>
+</html>

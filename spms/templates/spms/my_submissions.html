@@ -1,0 +1,88 @@
+{% extends 'spms/base.html' %}
+{% block title %}My Submissions{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header"><div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div></div>
+  <div class="sidebar-nav"><div class="sidebar-section">Menu</div>
+  <a class="nav-item" href="{% url 'student_dashboard' %}"><span class="ni">📊</span>Dashboard</a>
+  <a class="nav-item active" href="{% url 'my_submissions' %}"><span class="ni">📋</span>My Submissions</a>
+  <a class="nav-item" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+  <div class="sidebar-section">Account</div>
+  <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av">🧑</div>
+      <div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">Student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>My Submissions</h1>
+  <p>All your uploaded achievements and their current status.</p>
+</div>
+
+<!-- FILTER -->
+<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+  <a href="{% url 'my_submissions' %}" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+  <a href="?status=pending" class="btn {% if status_filter == 'pending' %}btn-primary{% else %}btn-outline{% endif %}">⏳ Pending</a>
+  <a href="?status=approved" class="btn {% if status_filter == 'approved' %}btn-primary{% else %}btn-outline{% endif %}">✅ Approved</a>
+  <a href="?status=rejected" class="btn {% if status_filter == 'rejected' %}btn-primary{% else %}btn-outline{% endif %}">❌ Rejected</a>
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Achievement</th>
+        <th>Category</th>
+        <th>Level</th>
+        <th>Date</th>
+        <th>Points</th>
+        <th>Status</th>
+        <th>Remarks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ach in achievements %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span>{{ ach.get_category_icon }}</span>
+            <div>
+              <div style="font-weight:500">{{ ach.title }}</div>
+              <div style="font-size:11px;color:var(--muted)">{{ ach.get_result_display }}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-{{ ach.category }}">{{ ach.get_category_display }}</span></td>
+        <td style="color:var(--muted)">{{ ach.get_level_display }}</td>
+        <td style="color:var(--muted)">{{ ach.date_of_achievement|date:"d M Y" }}</td>
+        <td style="font-family:var(--font-head);font-weight:700;color:{% if ach.status == 'approved' %}var(--accent){% else %}var(--muted){% endif %}">
+          {% if ach.status == 'approved' %}{{ ach.points_awarded }} pts{% else %}—{% endif %}
+        </td>
+        <td><span class="badge badge-{{ ach.status }}">{{ ach.get_status_display }}</span></td>
+        <td style="color:var(--muted);font-size:12px;max-width:160px">{{ ach.faculty_remarks|default:"—" }}</td>
+        <td>
+          {% if ach.status == 'pending' %}
+          <a href="{% url 'delete_achievement' ach.pk %}" class="btn btn-danger" onclick="return confirm('Delete this submission?')">🗑</a>
+          {% endif %}
+          {% if ach.proof_document %}
+          <a href="{{ ach.proof_document.url }}" target="_blank" class="btn btn-outline">📄</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No submissions found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

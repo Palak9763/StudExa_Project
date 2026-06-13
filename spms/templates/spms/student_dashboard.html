@@ -1,0 +1,154 @@
+{% extends 'spms/base.html' %}
+{% block title %}Student Dashboard — StudExa{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani" style="height:34px;width:auto;object-fit:contain"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div>
+    <div class="sidebar-tagline">Student Portal</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-section">Menu</div>
+    <a class="nav-item active" href="{% url 'student_dashboard' %}"><span class="ni">🏠</span>Dashboard</a>
+    <a class="nav-item" href="{% url 'my_submissions' %}"><span class="ni">📋</span>My Submissions</a>
+    <a class="nav-item" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+    <div class="sidebar-section">Account</div>
+    <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av">🧑</div>
+      <div>
+        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="user-role">{{ user.enrollment_no|default:"Student" }}</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>My Dashboard</h1>
+  <p>Welcome back, {{ user.first_name|default:user.username }}. Here's your progress overview.</p>
+</div>
+
+<!-- SCORE HERO -->
+<div class="score-hero">
+  <div>
+    <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px">Total Score</div>
+    <div class="score-num">{{ total_score }}</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-top:6px">pts across {{ stats.approved }} verified achievement{{ stats.approved|pluralize }}</div>
+  </div>
+  <div class="score-breakdown">
+    <div class="score-item"><div class="score-item-num">{{ score_by_cat.hackathon|default:0 }}</div><div class="score-item-label">Hackathon</div></div>
+    <div class="score-item"><div class="score-item-num">{{ score_by_cat.research|default:0 }}</div><div class="score-item-label">Research</div></div>
+    <div class="score-item"><div class="score-item-num">{{ score_by_cat.patent|default:0 }}</div><div class="score-item-label">Patent</div></div>
+    <div class="score-item"><div class="score-item-num">{{ score_by_cat.certificate|default:0 }}</div><div class="score-item-label">Certificates</div></div>
+    <div class="score-item"><div class="score-item-num">#{{ rank }}</div><div class="score-item-label">Your Rank</div></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-label">📤 Total Uploaded</div><div class="stat-num">{{ stats.total }}</div></div>
+  <div class="stat-card"><div class="stat-label">✅ Approved</div><div class="stat-num" style="color:var(--green)">{{ stats.approved }}</div></div>
+  <div class="stat-card"><div class="stat-label">⏳ Pending</div><div class="stat-num" style="color:var(--gold)">{{ stats.pending }}</div></div>
+  <div class="stat-card"><div class="stat-label">❌ Rejected</div><div class="stat-num" style="color:var(--red)">{{ stats.rejected }}</div></div>
+</div>
+
+<div class="grid2">
+  <!-- RECENT SUBMISSIONS -->
+  <div class="card">
+    <div class="card-title">Recent Submissions <a href="{% url 'my_submissions' %}">View All →</a></div>
+    {% for ach in achievements %}
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="width:38px;height:38px;border-radius:9px;background:var(--indigo-pale);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">{{ ach.get_category_icon }}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ach.title }}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">{{ ach.get_category_display }} · {{ ach.date_of_achievement|date:"M Y" }}</div>
+      </div>
+      <span class="badge badge-{{ ach.status }}">{{ ach.get_status_display }}</span>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;color:{% if ach.status == 'approved' %}var(--indigo){% else %}var(--muted){% endif %};font-size:14px;flex-shrink:0">
+        {% if ach.status == 'approved' %}+{{ ach.points_awarded }}{% else %}—{% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div style="text-align:center;padding:36px;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:10px">📭</div>
+      <div style="font-size:14px">No achievements yet. Upload your first one!</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- UPLOAD FORM -->
+  <div class="card">
+    <div class="card-title">Upload New Achievement</div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Achievement Type</label>
+        <select name="category" required>
+          <option value="">Select category...</option>
+          {% for val, label in form.fields.category.choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Title / Name</label>
+        <input type="text" name="title" placeholder="e.g. Smart India Hackathon 2025" required/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Level</label>
+          <select name="level" required>{% for val, label in form.fields.level.choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}</select>
+        </div>
+        <div class="form-group">
+          <label>Result / Type</label>
+          <select name="result" required><option value="">Select...</option>{% for val, label in form.fields.result.choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}</select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Date of Achievement</label>
+        <input type="date" name="date_of_achievement" required/>
+      </div>
+      <div class="form-group">
+        <label>Description (Optional)</label>
+        <textarea name="description" placeholder="Brief description..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Proof Document</label>
+        <div class="upload-zone" onclick="document.getElementById('proof_file').click()">
+          <div style="font-size:26px;margin-bottom:6px">📎</div>
+          <div style="font-size:13px;color:var(--muted)">Click to upload · PDF, JPG, PNG · Max 5MB</div>
+          <div id="file_name" style="font-size:12px;color:var(--indigo);margin-top:5px;font-weight:600"></div>
+        </div>
+        <input type="file" id="proof_file" name="proof_document" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="document.getElementById('file_name').textContent=this.files[0]?.name||''"/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Submit Achievement →</button>
+    </form>
+  </div>
+</div>
+
+<!-- PROGRESS BARS -->
+<div class="card">
+  <div class="card-title">Score Breakdown by Category</div>
+  {% with total=total_score|default:1 %}
+  <div class="prog-item">
+    <div class="prog-head"><span>Research Papers</span><span style="color:#7c3aed;font-weight:700">{{ score_by_cat.research|default:0 }} pts</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:{% widthratio score_by_cat.research|default:0 total 100 %}%;background:#7c3aed"></div></div>
+  </div>
+  <div class="prog-item">
+    <div class="prog-head"><span>Hackathons</span><span style="color:var(--indigo);font-weight:700">{{ score_by_cat.hackathon|default:0 }} pts</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:{% widthratio score_by_cat.hackathon|default:0 total 100 %}%;background:var(--indigo)"></div></div>
+  </div>
+  <div class="prog-item">
+    <div class="prog-head"><span>Certificates</span><span style="color:var(--green);font-weight:700">{{ score_by_cat.certificate|default:0 }} pts</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:{% widthratio score_by_cat.certificate|default:0 total 100 %}%;background:var(--green)"></div></div>
+  </div>
+  <div class="prog-item">
+    <div class="prog-head"><span>Patents</span><span style="color:var(--gold);font-weight:700">{{ score_by_cat.patent|default:0 }} pts</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:{% widthratio score_by_cat.patent|default:0 total 100 %}%;background:var(--gold)"></div></div>
+  </div>
+  {% endwith %}
+</div>
+{% endblock %}

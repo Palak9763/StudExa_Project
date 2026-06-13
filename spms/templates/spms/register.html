@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — StudExa | Sanjivani University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#f8f8f8;--white:#ffffff;--orange:#e05c1a;--orange-dark:#c44d12;--orange-light:#fff3ed;--orange-border:#f5c9aa;--text:#1a1a1a;--text2:#3a3a3a;--muted:#888;--border:#e5e5e5;--red:#dc2626}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text2);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+    nav{background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 6px rgba(0,0,0,0.05)}
+    nav img{height:48px;width:auto;object-fit:contain}
+    .nav-link{font-size:14px;font-weight:600;color:var(--orange);text-decoration:none;padding:8px 18px;border:2px solid var(--orange);border-radius:8px;transition:all 0.2s}
+    .nav-link:hover{background:var(--orange);color:#fff}
+    .page-body{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:40px 44px;width:100%;max-width:520px;box-shadow:0 4px 20px rgba(0,0,0,0.07)}
+    .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+    .logo-row img{height:40px;width:auto}
+    .studexa-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--orange)}
+    h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+    .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+    .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .fg{margin-bottom:14px}
+    label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
+    input,select{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all 0.2s}
+    input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(224,92,26,0.1)}
+    select option{background:#fff}
+    .btn{display:flex;align-items:center;justify-content:center;width:100%;padding:12px;background:var(--orange);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:6px;box-shadow:0 4px 14px rgba(224,92,26,0.25)}
+    .btn:hover{background:var(--orange-dark);transform:translateY(-1px)}
+    .footer{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+    .footer a{color:var(--orange);text-decoration:none;font-weight:600}
+    .errorlist{list-style:none;color:var(--red);font-size:12px;margin-top:3px}
+    .errorlist li::before{content:'⚠ '}
+    .page-footer{background:#fff;border-top:1px solid var(--border);padding:12px 40px;text-align:center;font-size:12px;color:var(--muted)}
+    .page-footer span{color:var(--orange);font-weight:600}
+  </style>
+</head>
+<body>
+  <nav>
+    <img src="{% static 'spms/img/sanjivani_logo.jpeg' %}" alt="Sanjivani University"/>
+    <a href="{% url 'login' %}" class="nav-link">Login</a>
+  </nav>
+  <div class="page-body">
+    <div class="card">
+      <div class="logo-row">
+        <div class="studexa-badge">🎓 StudExa</div>
+      </div>
+      <h2>Create your account</h2>
+      <p class="sub">Join Sanjivani University's achievement monitoring system</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="fr">
+          <div class="fg"><label>First Name</label><input type="text" name="first_name" placeholder="Rahul" value="{{ form.first_name.value|default:'' }}" required/>{{ form.first_name.errors }}</div>
+          <div class="fg"><label>Last Name</label><input type="text" name="last_name" placeholder="Sharma" value="{{ form.last_name.value|default:'' }}" required/>{{ form.last_name.errors }}</div>
+        </div>
+        <div class="fg"><label>Email Address</label><input type="email" name="email" placeholder="rahul@sanjivani.edu" value="{{ form.email.value|default:'' }}" required/>{{ form.email.errors }}</div>
+        <div class="fg"><label>Enrollment / Employee No.</label><input type="text" name="enrollment_no" placeholder="2021CS042" value="{{ form.enrollment_no.value|default:'' }}"/>{{ form.enrollment_no.errors }}</div>
+        <div class="fr">
+          <div class="fg">
+            <label>Department</label>
+            <select name="department">
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Mechanical">Mechanical</option>
+              <option value="Civil">Civil</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Role</label>
+            <select name="role">
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Password</label><input type="password" name="password1" placeholder="Create a strong password" required/>{{ form.password1.errors }}</div>
+        <div class="fg"><label>Confirm Password</label><input type="password" name="password2" placeholder="Repeat your password" required/>{{ form.password2.errors }}</div>
+        <button type="submit" class="btn">Create Account →</button>
+      </form>
+      <p class="footer">Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
+    </div>
+  </div>
+  <footer class="page-footer">© 2025 <span>StudExa</span> — Student Achievement Tracker · Sanjivani University</footer>
+</body>
+</html>

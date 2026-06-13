@@ -1,0 +1,100 @@
+{% extends 'spms/base.html' %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <div class="sidebar-header"><div class="sidebar-logo"><img src="/static/spms/img/sanjivani_logo.jpeg" alt="Sanjivani"/><div class="logo-text"><span class="logo-main">StudExa</span><span class="logo-sub">Sanjivani University</span></div></div></div>
+  <div class="sidebar-nav"><div class="sidebar-section">Menu</div>
+  {% if request.user.role == 'student' %}
+  <a class="nav-item" href="{% url 'student_dashboard' %}"><span class="ni">📊</span>Dashboard</a>
+  <a class="nav-item" href="{% url 'my_submissions' %}"><span class="ni">📋</span>My Submissions</a>
+  {% elif request.user.role == 'faculty' %}
+  <a class="nav-item" href="{% url 'faculty_dashboard' %}"><span class="ni">📊</span>Dashboard</a>
+  {% else %}
+  <a class="nav-item" href="{% url 'admin_dashboard' %}"><span class="ni">📊</span>Dashboard</a>
+  <a class="nav-item" href="{% url 'manage_users' %}"><span class="ni">👥</span>Manage Users</a>
+  {% endif %}
+  <a class="nav-item active" href="{% url 'leaderboard' %}"><span class="ni">🏆</span>Leaderboard</a>
+  <div class="sidebar-section">Account</div>
+  <a class="nav-item" href="{% url 'logout' %}"><span class="ni">🚪</span>Logout</a>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="user-av">🧑</div>
+      <div>
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">{{ request.user.get_role_display }}</div>
+      </div>
+    </div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🏆 Leaderboard</h1>
+  <p>Top performing students ranked by total verified achievement score.</p>
+</div>
+
+<!-- DEPT FILTER -->
+<form method="get" style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center">
+  <span style="color:var(--muted);font-size:13px">Filter by department:</span>
+  <a href="{% url 'leaderboard' %}" class="btn {% if not dept_filter %}btn-primary{% else %}btn-outline{% endif %}" style="font-size:12px">All</a>
+  {% for dept in departments %}
+  <a href="?dept={{ dept }}" class="btn {% if dept_filter == dept %}btn-primary{% else %}btn-outline{% endif %}" style="font-size:12px">{{ dept }}</a>
+  {% endfor %}
+</form>
+
+<!-- TOP 3 PODIUM -->
+{% if ranked|length >= 3 %}
+<div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:16px;margin-bottom:32px;align-items:end">
+  <!-- 2nd -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 20px;text-align:center">
+    <div style="font-size:32px;margin-bottom:8px">🥈</div>
+    <div style="font-weight:600;font-size:15px">{{ ranked.1.get_full_name|truncatechars:18 }}</div>
+    <div style="font-size:12px;color:var(--muted);margin:4px 0">{{ ranked.1.department }}</div>
+    <div style="font-family:var(--font-head);font-size:26px;font-weight:800;color:#94a3b8;margin-top:8px">{{ ranked.1.get_total_score }}</div>
+    <div style="font-size:11px;color:var(--muted)">pts</div>
+  </div>
+  <!-- 1st -->
+  <div style="background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:36px 24px;text-align:center;box-shadow:0 0 40px rgba(245,158,11,0.1)">
+    <div style="font-size:40px;margin-bottom:8px">🥇</div>
+    <div style="font-weight:700;font-size:17px">{{ ranked.0.get_full_name|truncatechars:20 }}</div>
+    <div style="font-size:12px;color:var(--muted);margin:4px 0">{{ ranked.0.department }}</div>
+    <div style="font-family:var(--font-head);font-size:34px;font-weight:800;color:var(--gold);margin-top:10px">{{ ranked.0.get_total_score }}</div>
+    <div style="font-size:11px;color:var(--muted)">pts</div>
+  </div>
+  <!-- 3rd -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 20px;text-align:center">
+    <div style="font-size:32px;margin-bottom:8px">🥉</div>
+    <div style="font-weight:600;font-size:15px">{{ ranked.2.get_full_name|truncatechars:18 }}</div>
+    <div style="font-size:12px;color:var(--muted);margin:4px 0">{{ ranked.2.department }}</div>
+    <div style="font-family:var(--font-head);font-size:26px;font-weight:800;color:#b45309;margin-top:8px">{{ ranked.2.get_total_score }}</div>
+    <div style="font-size:11px;color:var(--muted)">pts</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- FULL LIST -->
+<div class="card">
+  <div class="card-title">Full Rankings</div>
+  {% for student in ranked %}
+  <div class="lb-item" {% if student == request.user %}style="background:rgba(79,142,247,0.05);border-radius:10px;padding:12px;margin:-12px -4px"{% endif %}>
+    <div class="lb-rank {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</div>
+    <div class="lb-av">🧑</div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:500">
+        {{ student.get_full_name }}
+        {% if student == request.user %}<span style="font-size:11px;color:var(--accent);margin-left:6px">(You)</span>{% endif %}
+      </div>
+      <div style="font-size:12px;color:var(--muted)">{{ student.enrollment_no }} · {{ student.department }}</div>
+    </div>
+    <div style="text-align:right">
+      <div class="lb-pts">{{ student.get_total_score }}</div>
+      <div style="font-size:11px;color:var(--muted)">pts</div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:40px;color:var(--muted)">No students on the leaderboard yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}
