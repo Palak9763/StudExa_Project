@@ -281,14 +281,6 @@ StudExa automates the entire lifecycle—from submission and verification to aut
 
 ---
 
-# 👨‍💻 Author
 
-**Sarthak Darandale**
-
-Computer Science Engineering Student
-
-Passionate about AI, Machine Learning, Computer Vision, OCR Systems, and Full Stack Development.
-
----
 
 ## ⭐ If you found this project useful, don't forget to star the repository!
