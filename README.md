@@ -228,25 +228,7 @@ http://127.0.0.1:8000/
 
 ---
 
-# 🔐 Admin Panel
 
-Open
-
-```
-http://127.0.0.1:8000/admin/
-```
-
-Default Credentials
-
-```
-Email:
-admin@spms.com
-
-Password:
-admin123
-```
-
----
 
 # 🛠 Tech Stack
 
