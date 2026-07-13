@@ -158,17 +158,6 @@ spms_project/
 
 ---
 
-# ⚙️ Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/yourusername/StudExa.git
-
-cd StudExa
-```
-
----
 
 ## Create Virtual Environment
 
