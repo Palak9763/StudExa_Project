@@ -1,121 +1,312 @@
-# StudExa — Student Progress Monitoring System
+# 🎓 StudExa — Student Progress Monitoring System
 
-A full-stack web application built with **Django + SQLite** for tracking student academic achievements, automatic point calculation, and faculty verification.
+> A full-stack Student Progress Monitoring System built with **Django**, enabling students to submit academic achievements, automatically calculate reward points, and streamline faculty verification through a role-based workflow.
 
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.10+ installed
-- pip (Python package manager)
-
-### 1. Install & Run (Mac/Linux)
-```bash
-cd spms_project
-bash setup.sh
-python3 manage.py runserver
-```
-
-### 1. Install & Run (Windows)
-```
-cd spms_project
-setup.bat
-python manage.py runserver
-`
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
+![Django](https://img.shields.io/badge/Django-4.2-darkgreen?style=for-the-badge&logo=django)
+![SQLite](https://img.shields.io/badge/SQLite-Database-blue?style=for-the-badge&logo=sqlite)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 ---
 
+# 📌 Overview
 
+StudExa is a centralized platform designed for colleges and universities to digitally manage student achievements.
 
-## 📁 Project Structure
+Instead of maintaining spreadsheets or paper records, students can submit achievements online, faculty members verify submissions, and administrators manage point rules through a single dashboard.
+
+The system automatically awards points based on predefined achievement categories and maintains a leaderboard to encourage student participation.
+
+---
+
+# ✨ Features
+
+## 👨‍🎓 Student Portal
+
+- Student Registration & Login
+- Secure Authentication
+- Upload Achievement Certificates
+- Automatic Point Calculation
+- View Submission Status
+- Track Total Points
+- Personal Dashboard
+- Leaderboard Ranking
+
+---
+
+## 👨‍🏫 Faculty Portal
+
+- Review Submitted Achievements
+- Approve / Reject Requests
+- Add Review Remarks
+- View Pending Submissions
+- Manage Student Records
+
+---
+
+## 👨‍💼 Admin Portal
+
+- Manage Users
+- Configure Point Rules
+- Bulk Approve/Reject Achievements
+- Access Complete Database
+- Dashboard Analytics
+
+---
+
+# 🚀 Key Highlights
+
+✅ Role-Based Authentication
+
+✅ Automatic Point Calculation
+
+✅ Achievement Verification Workflow
+
+✅ Certificate Upload Support
+
+✅ Leaderboard System
+
+✅ Admin Configurable Rules
+
+✅ Responsive Dashboard
+
+✅ Secure Django Authentication
+
+---
+
+# 🏆 Achievement Point System
+
+| Achievement | Points |
+|-------------|--------|
+| 🥇 Hackathon Winner (National) | 50 |
+| 🌍 Hackathon Winner (International) | 70 |
+| 🥈 Runner-Up (National) | 35 |
+| 🎯 Hackathon Participation | 10 |
+| 📄 Indexed Journal Publication | 60 |
+| 🌐 International Conference | 40 |
+| 🧠 Patent Granted | 100 |
+| 📑 Patent Filed | 50 |
+| ☁ AWS / Google / Microsoft Certification | 30 |
+| 📚 NPTEL / Coursera Certification | 15 |
+
+> Point rules are fully configurable by the administrator.
+
+---
+
+# 🔄 System Workflow
+
+```text
+Student Registration
+        │
+        ▼
+Student Login
+        │
+        ▼
+Submit Achievement
+        │
+        ▼
+Upload Proof Document
+        │
+        ▼
+Automatic Point Calculation
+        │
+        ▼
+Faculty Review
+      ┌───────┐
+      │       │
+ Approved   Rejected
+      │
+      ▼
+Points Added
+      │
+      ▼
+Dashboard Updated
+      │
+      ▼
+Leaderboard Updated
+```
+
+---
+
+# 📂 Project Structure
 
 ```
 spms_project/
+│
 ├── manage.py
 ├── requirements.txt
-├── setup.sh          ← Mac/Linux setup
-├── setup.bat         ← Windows setup
+├── setup.sh
+├── setup.bat
+│
 ├── spms_project/
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
+│
 └── spms/
-    ├── models.py     ← User, Achievement, PointRule
-    ├── views.py      ← All role-based views
-    ├── forms.py      ← Registration, Login, Upload forms
-    ├── admin.py      ← Django admin config
-    ├── urls.py       ← All URL routes
+    ├── models.py
+    ├── views.py
+    ├── forms.py
+    ├── admin.py
+    ├── urls.py
     ├── templates/
     │   └── spms/
-    │       ├── base.html
-    │       ├── index.html          ← Landing page
-    │       ├── login.html
-    │       ├── register.html
-    │       ├── student_dashboard.html
-    │       ├── my_submissions.html
-    │       ├── faculty_dashboard.html
-    │       ├── review_achievement.html
-    │       ├── admin_dashboard.html
-    │       ├── manage_users.html
-    │       └── leaderboard.html
     └── management/
         └── commands/
-            └── seed_data.py  ← Initial data seeder
+            └── seed_data.py
 ```
 
 ---
 
-## 🏆 Point System
+# ⚙️ Installation
 
-| Achievement                    | Points |
-|--------------------------------|--------|
-| Hackathon Winner (National)    | 50 pts |
-| Hackathon Winner (International)| 70 pts|
-| Runner Up (National)           | 35 pts |
-| Hackathon Participation        | 10 pts |
-| Research — Indexed Journal     | 60 pts |
-| Research — Int'l Conference    | 40 pts |
-| Patent — Granted               | 100 pts|
-| Patent — Filed                 | 50 pts |
-| Certificate — AWS/Google/MS    | 30 pts |
-| Certificate — NPTEL/Coursera   | 15 pts |
+## Clone Repository
 
-*Point rules can be edited by admin at `/admin/spms/pointrule/`*
+```bash
+git clone https://github.com/yourusername/StudExa.git
+
+cd StudExa
+```
 
 ---
 
-## 🔄 Workflow
+## Create Virtual Environment
 
-1. **Student registers** → selects role as Student
-2. **Student uploads achievement** → fills form, uploads proof document
-3. **Points auto-assigned** based on category + level + result rules
-4. **Faculty reviews** → approves or rejects with remarks
-5. **On approval** → points added to student's total score
-6. **Dashboard updates** → student sees score, rank, and breakdown
+### Windows
+
+```bash
+python -m venv venv
+
+venv\Scripts\activate
+```
+
+### Linux / Mac
+
+```bash
+python3 -m venv venv
+
+source venv/bin/activate
+```
 
 ---
 
-## ⚙️ Admin Panel
+## Install Dependencies
 
-Django's built-in admin is available at:
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Apply Migrations
+
+```bash
+python manage.py migrate
+```
+
+---
+
+## Seed Initial Data
+
+```bash
+python manage.py seed_data
+```
+
+---
+
+## Run Server
+
+```bash
+python manage.py runserver
+```
+
+Visit
+
+```
+http://127.0.0.1:8000/
+```
+
+---
+
+# 🔐 Admin Panel
+
+Open
+
 ```
 http://127.0.0.1:8000/admin/
 ```
-Login with admin@spms.com / admin123
 
-From admin you can:
-- Add/edit Point Rules
-- Manage all users
-- Bulk approve/reject achievements
-- View all data
+Default Credentials
+
+```
+Email:
+admin@spms.com
+
+Password:
+admin123
+```
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
-- **Backend**: Django 4.2 (Python)
-- **Database**: SQLite (db.sqlite3)
-- **Frontend**: HTML5, CSS3 (no frameworks)
-- **Auth**: Django's built-in auth with custom User model
-- **File uploads**: Django FileField + Pillow
+| Technology | Usage |
+|------------|------|
+| Python | Backend Language |
+| Django 4.2 | Web Framework |
+| SQLite | Database |
+| HTML5 | UI |
+| CSS3 | Styling |
+| Django Templates | Frontend Rendering |
+| Pillow | Image/File Handling |
+
+---
+
+# 📸 Screens
+
+- Landing Page
+- Login
+- Registration
+- Student Dashboard
+- Faculty Dashboard
+- Admin Dashboard
+- Achievement Submission
+- Leaderboard
+
+> *(Add screenshots here after uploading them to GitHub.)*
+
+---
+
+# 📈 Future Enhancements
+
+- 📧 Email Notifications
+- 📱 Mobile Responsive UI
+- 📊 Analytics Dashboard
+- 🏅 Digital Badge System
+- 📄 PDF Report Generation
+- ☁ Cloud Storage Support
+- 🔔 Real-Time Notifications
+- 📥 Excel Export
+- REST API Integration
+
+---
+
+# 💡 Why StudExa?
+
+Managing student achievements manually is time-consuming and error-prone.
+
+StudExa automates the entire lifecycle—from submission and verification to automatic point allocation—providing transparency, efficiency, and a centralized platform for students, faculty, and administrators.
+
+---
+
+# 👨‍💻 Author
+
+**Sarthak Darandale**
+
+Computer Science Engineering Student
+
+Passionate about AI, Machine Learning, Computer Vision, OCR Systems, and Full Stack Development.
+
+---
+
+## ⭐ If you found this project useful, don't forget to star the repository!
