@@ -34,8 +34,7 @@ http://127.0.0.1:8000
 ## 🔑 Login Credentials (after setup)
 
 | Role    | Email                | Password   |
-|---------|----------------------|------------|
-| Admin   | admin@spms.com       | admin123   |
+|---------|----------------------|------------| |
 | Faculty | faculty@spms.com     | faculty123 |
 | Student | student@spms.com     | student123 |
 
