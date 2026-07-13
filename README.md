@@ -1,4 +1,4 @@
-# 🎓 StudExa — Student Progress Monitoring System
+# StudExa — Student Progress Monitoring System
 
 A full-stack web application built with **Django + SQLite** for tracking student academic achievements, automatic point calculation, and faculty verification.
 
@@ -22,23 +22,11 @@ python3 manage.py runserver
 cd spms_project
 setup.bat
 python manage.py runserver
-```
-
-### 2. Open in browser
-```
-http://127.0.0.1:8000
-```
+`
 
 ---
 
-## 🔑 Login Credentials (after setup)
 
-| Role    | Email                | Password   |
-|---------|----------------------|------------| |
-| Faculty | faculty@spms.com     | faculty123 |
-| Student | student@spms.com     | student123 |
-
----
 
 ## 📁 Project Structure
 
