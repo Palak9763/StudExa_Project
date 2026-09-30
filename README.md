@@ -266,7 +266,7 @@ http://127.0.0.1:8000/
 
 Managing student achievements manually is time-consuming and error-prone.
 
-StudExa automates the entire lifecycle—from submission and verification to automatic point allocation—providing transparency, efficiency, and a centralized platform for students, faculty, and administrators.
+StudExa automates the entire lifecycle—from submission and verification to automatic point allocation—providing transparency, efficiency, and a centralized platform for students, faculty, and administrators
 
 ---
 
